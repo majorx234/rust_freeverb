@@ -1,5 +1,7 @@
 use super::{all_pass::AllPass, comb::Comb};
 
+static FIXED_GAIN: f64 = 0.015;
+static SCALE_WET: f64 = 3.0;
 static STEREOSPREAD: usize = 23;
 
 // These values assume 44.1KHz sample rate
@@ -114,5 +116,38 @@ impl Freeverb {
             room_size: 0.5,
             frozen: false,
         }
+    }
+    pub fn set_wet(&mut self, value: f64) {
+        self.wet = value * SCALE_WET;
+        self.update_wet_gains();
+    }
+
+    pub fn set_width(&mut self, value: f64) {
+        self.width = value;
+        self.update_wet_gains();
+    }
+    fn update_wet_gains(&mut self) {
+        self.wet_gains = (
+            self.wet * (self.width / 2.0 + 0.5),
+            self.wet * ((1.0 - self.width) / 2.0),
+        )
+    }
+
+    pub fn tick(&mut self, input: (f64, f64)) -> (f64, f64) {
+        let input_mixed = (input.0 + input.1) * FIXED_GAIN * self.input_gain;
+        let mut out = (0.0, 0.0);
+        for comb in self.combs.iter_mut() {
+            out.0 += comb.0.tick(input_mixed);
+            out.1 += comb.1.tick(input_mixed);
+        }
+        for allpass in self.allpasses.iter_mut() {
+            out.0 = allpass.0.tick(out.0);
+            out.1 = allpass.1.tick(out.1);
+        }
+
+        (
+            out.0 * self.wet_gains.0 + out.1 * self.wet_gains.1 + input.0 * self.dry,
+            out.1 * self.wet_gains.0 + out.0 * self.wet_gains.1 + input.1 * self.dry,
+        )
     }
 }
