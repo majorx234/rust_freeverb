@@ -21,7 +21,7 @@ impl DelayLine {
         if self.index == self.buffer.len() - 1 {
             self.index = 0;
         } else {
-            self.index = 0;
+            self.index += 1;
         }
     }
 }
@@ -33,7 +33,7 @@ mod tests {
         let mut line = super::DelayLine::new(10);
         for i in 0..10 {
             assert_eq!(line.read(), 0.0);
-            line.write_and_advance(is as f64)
+            line.write_and_advance(i as f64)
         }
         for i in 0..10 {
             assert_eq!(line.read(), i as f64);
