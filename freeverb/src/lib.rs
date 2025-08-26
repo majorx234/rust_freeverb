@@ -1,6 +1,7 @@
 pub mod all_pass;
-pub mod delay_line;
 pub mod comb;
+pub mod delay_line;
+pub mod freeverb;
 
 #[cfg(test)]
 mod tests {

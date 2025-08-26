@@ -9,7 +9,7 @@ pub struct Comb {
 }
 
 impl Comb {
-    pub fn new(delay_length: usize) -> Comb {
+    pub fn new(delay_length: usize) -> Self {
         Comb {
             delay_line: DelayLine::new(delay_length),
             feedback: 0.5,

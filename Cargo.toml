@@ -1,6 +1,7 @@
-[package]
-name = "freeverb"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
+[workspace]
+resolver = "2"
+members = [
+   "audio_module",
+   "freeverb",
+   "freeverb_egui",
+]

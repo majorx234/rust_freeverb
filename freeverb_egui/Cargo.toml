@@ -1,0 +1,21 @@
+[package]
+name = "freeverb_egui"
+version = "0.1.0"
+authors = ["MajorX234 <majorx234@googlemail.com>"]
+edition = "2021"
+
+[lib]
+name = "freeverb_lib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "freeverb_egui"
+path = "src/main.rs"
+
+[dependencies]
+eframe = { version = "0.23.0"}
+epaint = { version = "0.23.0"}
+emath = { version = "0.23.0"}
+egui_plot = { version = "0.23.0"}
+scan_fmt = "0.2.6"
+crossbeam-channel = "0.5.8"
