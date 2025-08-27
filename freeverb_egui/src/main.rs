@@ -6,6 +6,6 @@ fn main() {
     let _ = eframe::run_native(
         "FreeverbEgui App",
         options,
-        Box::new(|_cc| Box::new(FreeverbEguiApp::default())),
+        Box::new(|_cc| Ok(Box::new(FreeverbEguiApp::default()))),
     );
 }
