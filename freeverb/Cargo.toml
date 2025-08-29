@@ -7,3 +7,5 @@ edition = "2021"
 path = "src/lib.rs"
 
 [dependencies]
+audio_module = {version = "0.1.0", path = "../audio_module" }
+num_enum = {version = "0.7.4"}
