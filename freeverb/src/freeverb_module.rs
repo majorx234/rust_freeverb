@@ -1,7 +1,9 @@
 use audio_module::parameters::{BoolParameter, FloatParameter, Parameter, ParameterProvider};
 use num_enum::{FromPrimitive, IntoPrimitive};
+use strum::EnumCount;
+use strum_macros::{EnumCount as EnumCountMacro, EnumIter};
 
-#[derive(FromPrimitive, IntoPrimitive)]
+#[derive(FromPrimitive, IntoPrimitive, EnumCountMacro)]
 #[repr(usize)]
 pub enum FreeverbParameters {
     #[num_enum(default)]
@@ -17,7 +19,7 @@ struct FreeverbModule {}
 
 impl ParameterProvider for FreeverbModule {
     fn parameter_count() -> usize {
-        6
+        FreeverbParameters::COUNT
     }
 
     fn parameter(id: usize) -> Box<dyn Parameter> {
