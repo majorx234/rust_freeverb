@@ -1,3 +1,4 @@
+use crate::freeverb::Freeverb;
 use audio_module::parameters::{BoolParameter, FloatParameter, Parameter, ParameterProvider};
 use num_enum::{FromPrimitive, IntoPrimitive};
 use strum::EnumCount;
@@ -13,6 +14,18 @@ pub enum FreeverbParameters {
     Freeze,
     Dry,
     Wet,
+}
+
+pub struct FreeverbProcessor {
+    freeverb: Freeverb,
+}
+
+impl FreeverbProcessor {
+    fn new(sample_rate: usize) -> Self {
+        Self {
+            freeverb: Freeverb::new(sample_rate),
+        }
+    }
 }
 
 struct FreeverbModule {}
