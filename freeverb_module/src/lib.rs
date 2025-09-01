@@ -1,4 +1,4 @@
-use crate::freeverb::Freeverb;
+use freeverb::Freeverb;
 use audio_module::parameters::{BoolParameter, FloatParameter, Parameter, ParameterProvider};
 use num_enum::{FromPrimitive, IntoPrimitive};
 use strum::EnumCount;

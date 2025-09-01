@@ -2,7 +2,8 @@ pub mod all_pass;
 pub mod comb;
 pub mod delay_line;
 pub mod freeverb;
-pub mod freeverb_module;
+
+pub use self::freeverb::Freeverb;
 
 #[cfg(test)]
 mod tests {

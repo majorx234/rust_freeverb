@@ -1,0 +1,11 @@
+[package]
+name = "freeverb_module"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+audio_module = { version = "0.1.0", path = "../audio_module" }
+freeverb = { version = "0.1.0", path = "../freeverb" }
+strum = { version = "0.27.2"}
+strum_macros = { version = "0.27.2"}
+num_enum = {version = "0.7.4"}
