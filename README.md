@@ -13,5 +13,6 @@
 # References
 - based on freeverb:
   - https://ccrma.stanford.edu/~jos/pasp/Freeverb.html
-- idea from ADC 2018:
+- idea from Ian Hobson talk at ADC 2018:
   - https://www.youtube.com/watch?v=Yom9E-67bdI
+  - https://github.com/irh/freeverb-rs
