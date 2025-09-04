@@ -2,12 +2,13 @@ use super::{all_pass::AllPass, comb::Comb};
 
 static FIXED_GAIN: f64 = 0.015;
 static SCALE_WET: f64 = 3.0;
-static STEREOSPREAD: usize = 23;
 
 const SCALE_DAMPENING: f64 = 0.4;
 
 const SCALE_ROOM: f64 = 0.28;
 const OFFSET_ROOM: f64 = 0.7;
+
+static STEREOSPREAD: usize = 23;
 
 // These values assume 44.1KHz sample rate
 // they will probably be OK for 48KHz sample rate
@@ -105,11 +106,11 @@ impl Freeverb {
                 ),
                 (
                     AllPass::new(adjust_length(ALLPASS_TUNING_L3, sample_rate)),
-                    AllPass::new(adjust_length(ALLPASS_TUNING_R1, sample_rate)),
+                    AllPass::new(adjust_length(ALLPASS_TUNING_R3, sample_rate)),
                 ),
                 (
                     AllPass::new(adjust_length(ALLPASS_TUNING_L4, sample_rate)),
-                    AllPass::new(adjust_length(ALLPASS_TUNING_L4, sample_rate)),
+                    AllPass::new(adjust_length(ALLPASS_TUNING_R4, sample_rate)),
                 ),
             ],
             wet_gains: (0.0, 0.0),
