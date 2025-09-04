@@ -4,6 +4,11 @@ static FIXED_GAIN: f64 = 0.015;
 static SCALE_WET: f64 = 3.0;
 static STEREOSPREAD: usize = 23;
 
+const SCALE_DAMPENING: f64 = 0.4;
+
+const SCALE_ROOM: f64 = 0.28;
+const OFFSET_ROOM: f64 = 0.7;
+
 // These values assume 44.1KHz sample rate
 // they will probably be OK for 48KHz sample rate
 // but would need scaling for 96KHz (or other) sample rates.
@@ -126,11 +131,53 @@ impl Freeverb {
         self.width = value;
         self.update_wet_gains();
     }
+
     fn update_wet_gains(&mut self) {
         self.wet_gains = (
             self.wet * (self.width / 2.0 + 0.5),
             self.wet * ((1.0 - self.width) / 2.0),
         )
+    }
+
+    pub fn set_dampening(&mut self, value: f64) {
+        self.dampening = value * SCALE_DAMPENING;
+        self.update_combs();
+    }
+
+    pub fn set_freeze(&mut self, frozen: bool) {
+        self.frozen = frozen;
+        self.update_combs();
+    }
+
+    fn set_frozen(&mut self, frozen: bool) {
+        self.frozen = frozen;
+        self.input_gain = if frozen { 0.0 } else { 1.0 };
+        self.update_combs();
+    }
+
+    pub fn set_room_size(&mut self, value: f64) {
+        self.room_size = value * SCALE_ROOM + OFFSET_ROOM;
+        self.update_combs();
+    }
+
+    fn update_combs(&mut self) {
+        let (feedback, dampening) = if self.frozen {
+            (1.0, 0.0)
+        } else {
+            (self.room_size, self.dampening)
+        };
+
+        for combs in self.combs.iter_mut() {
+            combs.0.set_feedback(feedback);
+            combs.1.set_feedback(feedback);
+
+            combs.0.set_dampening(dampening);
+            combs.1.set_dampening(dampening);
+        }
+    }
+
+    pub fn set_dry(&mut self, value: f64) {
+        self.dry = value;
     }
 
     pub fn tick(&mut self, input: (f64, f64)) -> (f64, f64) {

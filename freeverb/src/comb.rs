@@ -19,6 +19,14 @@ impl Comb {
         }
     }
 
+    pub fn set_dampening(&mut self, value: f64) {
+        self.dampening = value;
+        self.dampening_inverse = 1.0 - value;
+    }
+
+    pub fn set_feedback(&mut self, value: f64) {
+        self.feedback = value;
+    }
     pub fn tick(&mut self, input: f64) -> f64 {
         let output = self.delay_line.read();
         self.filter_state = output * self.dampening_inverse + self.filter_state * self.dampening;
