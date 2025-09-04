@@ -94,3 +94,11 @@ impl ParameterProvider for FreeverbModule {
         }
     }
 }
+
+impl AudioModule for FreeverbModule {
+    type Processor = FreeverbProcessor;
+
+    fn create_processor(sample_rate: usize) -> Self::Processor {
+        FreeverbProcessor::new(sample_rate)
+    }
+}
