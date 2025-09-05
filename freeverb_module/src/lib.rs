@@ -88,7 +88,9 @@ impl ParameterProvider for FreeverbModule {
             FreeverbParameters::RoomSize => {
                 Box::new(FloatParameter::new("Room Size").default_user_value(0.5))
             }
-            FreeverbParameters::Freeze => Box::new(BoolParameter::new("Freeze")),
+            FreeverbParameters::Freeze => {
+                Box::new(BoolParameter::new("Freeze").default_user_value(false))
+            }
             FreeverbParameters::Dry => Box::new(FloatParameter::new("Dry").default_user_value(0.0)),
             FreeverbParameters::Wet => Box::new(FloatParameter::new("Wet").default_user_value(1.0)),
         }
