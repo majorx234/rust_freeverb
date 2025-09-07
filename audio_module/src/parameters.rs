@@ -71,3 +71,38 @@ impl Parameter for FloatParameter {
         self.default_user_value
     }
 }
+
+pub struct CurveParameter {
+    pub name: String,
+    pub curve: Vec<f32>,
+    pub default_user_value: Vec<f32>,
+}
+
+impl CurveParameter {
+    pub fn new(name: &str) -> Self {
+        Self {
+            name: name.to_string(),
+            curve: Vec::new(),
+            default_user_value: Vec::new(),
+        }
+    }
+
+    pub fn default_user_value(mut self, default: Vec<f32>) -> Self {
+        self.default_user_value.copy_from_slice(&default);
+        self
+    }
+}
+
+impl Parameter for CurveParameter {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+
+    fn default_user_value(&self) -> f32 {
+        if self.default_user_value.is_empty() {
+            0.0
+        } else {
+            1.0
+        }
+    }
+}
