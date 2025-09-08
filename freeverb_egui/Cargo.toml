@@ -13,6 +13,10 @@ name = "freeverb_egui"
 path = "src/main.rs"
 
 [dependencies]
-eframe = { version = "0.31.0"}
+audio_module = { version = "0.1.0", path="../audio_module" }
+freeverb_module = { version = "0.1.0", path="../freeverb_module" }
+eframe = { version = "0.31.0" }
 scan_fmt = "0.2.6"
-crossbeam-channel = "0.5.8"
+jack = { version = "0.11.4" }
+crossbeam-channel = { version = "0.5.8" }
+bus = { version = "2.4.1" }
