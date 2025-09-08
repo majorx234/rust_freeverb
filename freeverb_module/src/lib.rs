@@ -70,7 +70,7 @@ impl AudioProcessor for FreeverbProcessor {
     }
 }
 
-struct FreeverbModule {}
+pub struct FreeverbModule {}
 
 impl ParameterProvider for FreeverbModule {
     fn parameter_count() -> usize {
