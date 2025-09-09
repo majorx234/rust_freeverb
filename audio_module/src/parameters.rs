@@ -1,6 +1,11 @@
+use crate::widget::Widget;
+
 pub trait Parameter {
     fn name(&self) -> String;
     fn default_user_value(&self) -> f32;
+    fn widget(&self) -> Widget {
+        Widget::Slider
+    }
 }
 
 pub trait ParameterProvider {
@@ -39,6 +44,10 @@ impl Parameter for BoolParameter {
             0.0
         }
     }
+
+    fn widget(&self) -> Widget {
+        Widget::Button
+    }
 }
 
 pub struct FloatParameter {
@@ -69,6 +78,10 @@ impl Parameter for FloatParameter {
 
     fn default_user_value(&self) -> f32 {
         self.default_user_value
+    }
+
+    fn widget(&self) -> Widget {
+        Widget::Slider
     }
 }
 
@@ -104,5 +117,8 @@ impl Parameter for CurveParameter {
         } else {
             1.0
         }
+    }
+    fn widget(&self) -> Widget {
+        Widget::Graph
     }
 }
