@@ -1,7 +1,7 @@
 pub mod parameters;
 pub mod widget;
 
-use crate::parameters::ParameterProvider;
+pub use parameters::ParameterProvider;
 pub use widget::Widget;
 
 pub enum Command {
