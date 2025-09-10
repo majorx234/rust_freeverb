@@ -14,9 +14,10 @@ fn main_run<Module: AudioModule>() {
     let (tx_command, rx_command) = bounded::<Command>(1024);
     let options = eframe::NativeOptions::default();
 
+    let freeverb_egui_app = FreeverbEguiApp::new::<Module>();
     let _ = eframe::run_native(
         "FreeverbEgui App",
         options,
-        Box::new(|_cc| Ok(Box::new(FreeverbEguiApp::default()))),
+        Box::new(|_cc| Ok(Box::new(freeverb_egui_app))),
     );
 }

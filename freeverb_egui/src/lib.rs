@@ -1,3 +1,4 @@
+use audio_module::{parameters::Parameter, AudioModule, AudioProcessor, Widget};
 use eframe::egui;
 
 pub fn toggle_ui(ui: &mut egui::Ui, on: &mut bool) -> egui::Response {
@@ -36,24 +37,18 @@ pub fn toggle(on: &mut bool) -> impl egui::Widget + '_ {
 }
 
 pub struct FreeverbEguiApp {
-    dampening: f64,
-    width: f64,
-    room_size: f64,
-    freeze: bool,
-    dry: f64,
-    wet: f64,
+    num_params: usize,
+    params: Vec<Box<dyn Parameter>>,
 }
 
-impl Default for FreeverbEguiApp {
-    fn default() -> Self {
-        Self {
-            dampening: 50.0,
-            width: 50.0,
-            room_size: 50.0,
-            freeze: false,
-            dry: 50.0,
-            wet: 50.0,
+impl FreeverbEguiApp {
+    pub fn new<Module: AudioModule>() -> Self {
+        let num_params = Module::parameter_count();
+        let mut params = Vec::new();
+        for idx in 0..num_params {
+            params.push(Module::parameter(idx));
         }
+        FreeverbEguiApp { num_params, params }
     }
 }
 
@@ -62,13 +57,27 @@ impl eframe::App for FreeverbEguiApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("Freeverb");
             ui.horizontal(|ui| {
-                ui.add(egui::Slider::new(&mut self.dampening, 0.0..=100.0).vertical());
-                ui.add(egui::Slider::new(&mut self.width, 0.0..=100.0).vertical());
-                ui.add(egui::Slider::new(&mut self.room_size, 0.0..=100.0).vertical());
-                ui.add(toggle(&mut self.freeze));
-                ui.add(egui::Slider::new(&mut self.dry, 0.0..=100.0).vertical());
-                ui.add(egui::Slider::new(&mut self.wet, 0.0..=100.0).vertical());
-            })
+                for id in 0..self.num_params {
+                    let parameter = &self.params[id];
+                    let widget = match parameter.widget() {
+                        Widget::Slider => {
+                            let mut param_value = parameter.default_user_value();
+                            ui.add(egui::Slider::new(&mut param_value, 0.0..=100.0).vertical());
+                            // TODO: send data to id, rx_command
+                        }
+                        Widget::Button => {
+                            let mut param_value = if parameter.default_user_value() == 0.0 {
+                                false
+                            } else {
+                                true
+                            };
+                            ui.add(toggle(&mut param_value));
+                            // TODO: send data to id, rx_command
+                        }
+                        _ => {}
+                    };
+                }
+            });
         });
     }
 }
