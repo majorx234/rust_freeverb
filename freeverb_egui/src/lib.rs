@@ -1,7 +1,7 @@
 use audio_module::{parameters::Parameter, AudioModule, AudioProcessor, Command, Widget};
 use bus::Bus;
 use crossbeam_channel::{unbounded, Receiver, Sender};
-use eframe::egui;
+use eframe::{egui, glow::Context};
 
 pub fn toggle_ui(ui: &mut egui::Ui, on: &mut bool) -> egui::Response {
     let desired_size = ui.spacing().interact_size.y * egui::vec2(2.0, 1.0);
@@ -41,12 +41,14 @@ pub fn toggle(on: &mut bool) -> impl egui::Widget + '_ {
 pub struct FreeverbEguiApp {
     num_params: usize,
     params: Vec<Box<dyn Parameter>>,
+    jack_thread: Option<std::thread::JoinHandle<()>>,
     tx_close: Option<Bus<bool>>,
     tx_command: Option<Sender<Command>>,
 }
 
 impl FreeverbEguiApp {
     pub fn new<Module: AudioModule>(
+        jack_thread: Option<std::thread::JoinHandle<()>>,
         tx_close: Option<Bus<bool>>,
         tx_command: Option<Sender<Command>>,
     ) -> Self {
@@ -60,6 +62,7 @@ impl FreeverbEguiApp {
             params,
             tx_close,
             tx_command,
+            jack_thread,
         }
     }
 }
@@ -91,5 +94,17 @@ impl eframe::App for FreeverbEguiApp {
                 }
             });
         });
+    }
+    fn on_exit(&mut self, _gl: Option<&Context>) {
+        if let Some(ref mut tx_close) = self.tx_close {
+            if let Err(e) = tx_close.try_broadcast(false) {
+                println!("could not send close e: {}", e);
+            };
+
+            if let Some(jack_thread) = self.jack_thread.take() {
+                jack_thread.join().unwrap();
+            }
+            println!("jack_thread closed");
+        }
     }
 }
