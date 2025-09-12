@@ -1,6 +1,7 @@
 mod jackprocess;
 use crate::jackprocess::start_jack_thread;
 use audio_module::{widget::Widget, AudioModule, Command};
+use bus::Bus;
 use crossbeam_channel::{bounded, Receiver, Sender};
 use eframe::egui;
 use freeverb_lib::FreeverbEguiApp;
@@ -12,7 +13,13 @@ fn main() {
 
 fn main_run<Module: AudioModule>() {
     let (tx_command, rx_command) = bounded::<Command>(1024);
+    let mut tx_close = Bus::<bool>::new(1);
+    let rx1_close = tx_close.add_rx();
+
     let options = eframe::NativeOptions::default();
+
+    let samplerate = 48000;
+    let _jack_thread_hdl = start_jack_thread(samplerate, rx_command, rx1_close);
 
     let freeverb_egui_app = FreeverbEguiApp::new::<Module>();
     let _ = eframe::run_native(
