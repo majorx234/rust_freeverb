@@ -1,4 +1,6 @@
-use audio_module::{parameters::Parameter, AudioModule, AudioProcessor, Widget};
+use audio_module::{parameters::Parameter, AudioModule, AudioProcessor, Command, Widget};
+use bus::Bus;
+use crossbeam_channel::{unbounded, Receiver, Sender};
 use eframe::egui;
 
 pub fn toggle_ui(ui: &mut egui::Ui, on: &mut bool) -> egui::Response {
@@ -39,16 +41,26 @@ pub fn toggle(on: &mut bool) -> impl egui::Widget + '_ {
 pub struct FreeverbEguiApp {
     num_params: usize,
     params: Vec<Box<dyn Parameter>>,
+    tx_close: Option<Bus<bool>>,
+    tx_command: Option<Sender<Command>>,
 }
 
 impl FreeverbEguiApp {
-    pub fn new<Module: AudioModule>() -> Self {
+    pub fn new<Module: AudioModule>(
+        tx_close: Option<Bus<bool>>,
+        tx_command: Option<Sender<Command>>,
+    ) -> Self {
         let num_params = Module::parameter_count();
         let mut params = Vec::new();
         for idx in 0..num_params {
             params.push(Module::parameter(idx));
         }
-        FreeverbEguiApp { num_params, params }
+        FreeverbEguiApp {
+            num_params,
+            params,
+            tx_close,
+            tx_command,
+        }
     }
 }
 
