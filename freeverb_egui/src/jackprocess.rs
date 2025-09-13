@@ -31,6 +31,16 @@ pub fn start_jack_thread(
             .unwrap();
 
         let process_callback = move |_: &jack::Client, ps: &jack::ProcessScope| -> jack::Control {
+            if let Ok(rx_command_msg) = rx_command.try_recv() {
+                let command_msg: Command = rx_command_msg;
+                match command_msg {
+                    Command::SetParameter(id, value) => {
+                        if value > 100.0 {
+                            println!("wont be reached");
+                        }
+                    }
+                }
+            };
             jack::Control::Continue
         };
 

@@ -40,7 +40,7 @@ pub fn toggle(on: &mut bool) -> impl egui::Widget + '_ {
 
 pub struct FreeverbEguiApp {
     num_params: usize,
-    params: Vec<Box<dyn Parameter>>,
+    params: Vec<(Box<dyn Parameter>, f32)>,
     jack_thread: Option<std::thread::JoinHandle<()>>,
     tx_close: Option<Bus<bool>>,
     tx_command: Option<Sender<Command>>,
@@ -55,7 +55,10 @@ impl FreeverbEguiApp {
         let num_params = Module::parameter_count();
         let mut params = Vec::new();
         for idx in 0..num_params {
-            params.push(Module::parameter(idx));
+            params.push((
+                Module::parameter(idx),
+                Module::parameter(idx).default_user_value(),
+            ));
         }
         FreeverbEguiApp {
             num_params,
@@ -74,23 +77,27 @@ impl eframe::App for FreeverbEguiApp {
             ui.horizontal(|ui| {
                 for id in 0..self.num_params {
                     let parameter = &self.params[id];
-                    let widget = match parameter.widget() {
+                    let mut param_value = parameter.1;
+                    match parameter.0.widget() {
                         Widget::Slider => {
-                            let mut param_value = parameter.default_user_value();
                             ui.add(egui::Slider::new(&mut param_value, 0.0..=100.0).vertical());
-                            // TODO: send data to id, rx_command
                         }
                         Widget::Button => {
-                            let mut param_value = if parameter.default_user_value() == 0.0 {
-                                false
-                            } else {
-                                true
-                            };
-                            ui.add(toggle(&mut param_value));
-                            // TODO: send data to id, rx_command
+                            let mut param_value_bool = parameter.1 != 0.0;
+                            ui.add(toggle(&mut param_value_bool));
+                            param_value = if param_value_bool { 1.0 } else { 0.0 };
                         }
                         _ => {}
                     };
+                    if param_value != parameter.1 {
+                        self.params[id].1 = param_value;
+                        //if value changed
+                        if let Some(ref tx_command) = self.tx_command {
+                            tx_command
+                                .try_send(Command::SetParameter(id, param_value))
+                                .unwrap();
+                        }
+                    }
                 }
             });
         });
