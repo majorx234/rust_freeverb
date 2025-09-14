@@ -46,7 +46,6 @@ pub fn start_jack_thread(
 
         let process = jack::ClosureProcessHandler::new(process_callback);
         let active_client = client.activate_async((), process).unwrap();
-
         let mut run = true;
         while run {
             thread::sleep(Duration::from_millis(100));
@@ -55,5 +54,6 @@ pub fn start_jack_thread(
                 Err(_) => run = false,
             }
         }
+        let _ = active_client.deactivate();
     })
 }
