@@ -19,7 +19,7 @@ fn main_run<Module: AudioModule>() {
     let options = eframe::NativeOptions::default();
 
     let samplerate = 48000;
-    let jack_thread_hdl = start_jack_thread(samplerate, rx_command, rx1_close);
+    let jack_thread_hdl = start_jack_thread::<Module>(samplerate, rx_command, rx1_close);
 
     let freeverb_egui_app =
         FreeverbEguiApp::new::<Module>(Some(jack_thread_hdl), Some(tx_close), Some(tx_command));

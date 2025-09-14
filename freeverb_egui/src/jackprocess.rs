@@ -5,13 +5,14 @@ use crossbeam_channel::Receiver;
 
 use std::{process::exit, thread, time::Duration};
 
-pub fn start_jack_thread(
+pub fn start_jack_thread<Module: AudioModule>(
     sample_rate: usize,
     rx_command: crossbeam_channel::Receiver<Command>,
     mut rx_close: BusReader<bool>,
 ) -> std::thread::JoinHandle<()> {
     std::thread::spawn(move || {
         let mut run: bool = true;
+        let mut processor = Module::create_processor(sample_rate);
         let (client, _status) = jack::Client::new("freeverb", jack::ClientOptions::NO_START_SERVER)
             .expect("No Jack server running\n");
 
@@ -33,14 +34,9 @@ pub fn start_jack_thread(
         let process_callback = move |_: &jack::Client, ps: &jack::ProcessScope| -> jack::Control {
             if let Ok(rx_command_msg) = rx_command.try_recv() {
                 let command_msg: Command = rx_command_msg;
-                match command_msg {
-                    Command::SetParameter(id, value) => {
-                        if value > 100.0 {
-                            println!("wont be reached");
-                        }
-                    }
-                }
+                processor.handle_command(command_msg);
             };
+
             jack::Control::Continue
         };
 
