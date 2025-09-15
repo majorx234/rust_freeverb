@@ -199,3 +199,16 @@ impl Freeverb {
         )
     }
 }
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn ticking_does_something() {
+        let mut freeverb = super::Freeverb::new(44100);
+        assert_eq!(freeverb.tick((1.0, 1.0)), (0.0, 0.0));
+        for _ in 0..super::COMB_TUNING_R8 * 2 {
+            freeverb.tick((0.0, 0.0));
+        }
+        assert_ne!(freeverb.tick((0.0, 0.0)), (0.0, 0.0));
+    }
+}
