@@ -5,6 +5,7 @@ use audio_module::{
 use freeverb::Freeverb;
 use itertools::izip;
 use num_enum::{FromPrimitive, IntoPrimitive};
+use std::str::FromStr;
 use strum::EnumCount;
 use strum_macros::EnumCount as EnumCountMacro;
 
@@ -112,5 +113,9 @@ impl AudioModule for FreeverbModule {
 
     fn create_processor(sample_rate: usize) -> Self::Processor {
         FreeverbProcessor::new(sample_rate)
+    }
+
+    fn name() -> String {
+        String::from_str("Freeverb").unwrap()
     }
 }

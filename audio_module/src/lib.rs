@@ -26,4 +26,5 @@ pub trait AudioModule: ParameterProvider {
     type Processor: AudioProcessor;
 
     fn create_processor(sample_rate: usize) -> Self::Processor;
+    fn name() -> String;
 }
