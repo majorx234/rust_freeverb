@@ -1,5 +1,5 @@
 extern crate jack;
-use audio_module::{AudioModule, Command, CommandHandler};
+use audio_module::{AudioModule, AudioProcessor, Command, CommandHandler};
 use bus::BusReader;
 use crossbeam_channel::Receiver;
 
@@ -11,29 +11,36 @@ pub fn start_jack_thread<Module: AudioModule>(
     mut rx_close: BusReader<bool>,
 ) -> std::thread::JoinHandle<()> {
     std::thread::spawn(move || {
-        let (client, _status) = jack::Client::new("freeverb", jack::ClientOptions::NO_START_SERVER)
-            .expect("No Jack server running\n");
+        let (client, _status) =
+            jack::Client::new(&Module::name(), jack::ClientOptions::NO_START_SERVER)
+                .expect("No Jack server running\n");
         let sample_rate = client.sample_rate();
 
         let mut processor = Module::create_processor(sample_rate);
         // register ports
-        let mut in_a = client
+        let in_l = client
             .register_port("freeverb_in_l", jack::AudioIn)
             .unwrap();
-        let mut in_b = client
+        let in_r = client
             .register_port("freeverb_in_r", jack::AudioIn)
             .unwrap();
-        let mut out_a = client
+        let mut out_l = client
             .register_port("freeverb_out_l", jack::AudioOut)
             .unwrap();
-        let mut out_b = client
+        let mut out_r = client
             .register_port("freeverb_out_r", jack::AudioOut)
             .unwrap();
 
-        let process_callback = move |_: &jack::Client, _ps: &jack::ProcessScope| -> jack::Control {
+        let process_callback = move |_: &jack::Client, ps: &jack::ProcessScope| -> jack::Control {
             if let Ok(rx_command_msg) = rx_command.try_recv() {
                 let command_msg: Command = rx_command_msg;
                 processor.handle_command(command_msg);
+                processor.process_stereo(
+                    in_l.as_slice(ps),
+                    in_r.as_slice(ps),
+                    out_l.as_mut_slice(ps),
+                    out_r.as_mut_slice(ps),
+                );
             };
 
             jack::Control::Continue
