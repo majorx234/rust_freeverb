@@ -1,6 +1,6 @@
-use audio_module::{parameters::Parameter, AudioModule, AudioProcessor, Command, Widget};
+use audio_module::{parameters::Parameter, AudioModule, Command, Widget};
 use bus::Bus;
-use crossbeam_channel::{unbounded, Receiver, Sender};
+use crossbeam_channel::Sender;
 use eframe::{egui, glow::Context};
 
 pub fn toggle_ui(ui: &mut egui::Ui, on: &mut bool) -> egui::Response {

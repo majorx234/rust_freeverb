@@ -6,7 +6,7 @@ use freeverb::Freeverb;
 use itertools::izip;
 use num_enum::{FromPrimitive, IntoPrimitive};
 use strum::EnumCount;
-use strum_macros::{EnumCount as EnumCountMacro, EnumIter};
+use strum_macros::EnumCount as EnumCountMacro;
 
 #[derive(FromPrimitive, IntoPrimitive, EnumCountMacro)]
 #[repr(usize)]

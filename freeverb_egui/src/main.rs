@@ -1,8 +1,8 @@
 mod jackprocess;
 use crate::jackprocess::start_jack_thread;
-use audio_module::{widget::Widget, AudioModule, Command};
+use audio_module::{AudioModule, Command};
 use bus::Bus;
-use crossbeam_channel::{bounded, Receiver, Sender};
+use crossbeam_channel::bounded;
 use eframe::egui;
 use freeverb_lib::FreeverbEguiApp;
 use freeverb_module::FreeverbModule;
