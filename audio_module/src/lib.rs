@@ -13,7 +13,13 @@ pub trait CommandHandler {
 }
 
 pub trait AudioProcessor: CommandHandler + Send + Sync + 'static {
-    fn process_stereo(&mut self, input: &[f32], output: &mut [f32]);
+    fn process_stereo(
+        &mut self,
+        input_l: &[f32],
+        input_r: &[f32],
+        output_l: &mut [f32],
+        output_r: &mut [f32],
+    );
 }
 
 pub trait AudioModule: ParameterProvider {

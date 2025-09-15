@@ -3,6 +3,7 @@ use audio_module::{
     AudioModule, AudioProcessor, Command, CommandHandler,
 };
 use freeverb::Freeverb;
+use itertools::izip;
 use num_enum::{FromPrimitive, IntoPrimitive};
 use strum::EnumCount;
 use strum_macros::{EnumCount as EnumCountMacro, EnumIter};
@@ -59,13 +60,22 @@ impl CommandHandler for FreeverbProcessor {
 }
 
 impl AudioProcessor for FreeverbProcessor {
-    fn process_stereo(&mut self, input: &[f32], output: &mut [f32]) {
-        assert!(input.len() == output.len());
+    fn process_stereo(
+        &mut self,
+        input_l: &[f32],
+        input_r: &[f32],
+        output_l: &mut [f32],
+        output_r: &mut [f32],
+    ) {
+        assert!(input_l.len() == output_l.len());
+        assert!(input_r.len() == output_r.len());
 
-        for (in_vec, out_vec) in input.chunks(2).zip(output.chunks_mut(2)) {
-            let result = self.freeverb.tick((in_vec[0] as f64, in_vec[1] as f64));
-            out_vec[0] = result.0 as f32;
-            out_vec[1] = result.1 as f32;
+        for (in_vec_l, in_vec_r, out_vec_l, out_vec_r) in
+            izip!(input_l, input_r, output_l, output_r)
+        {
+            let result = self.freeverb.tick((*in_vec_l as f64, *in_vec_r as f64));
+            *out_vec_l = result.0 as f32;
+            *out_vec_r = result.1 as f32;
         }
     }
 }

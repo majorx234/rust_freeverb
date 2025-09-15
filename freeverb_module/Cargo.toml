@@ -9,3 +9,4 @@ freeverb = { version = "0.1.0", path = "../freeverb" }
 strum = { version = "0.27.2"}
 strum_macros = { version = "0.27.2"}
 num_enum = {version = "0.7.4"}
+itertools = {version = "0.14.0"}
