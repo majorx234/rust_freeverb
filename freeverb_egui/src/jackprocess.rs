@@ -3,7 +3,7 @@ use audio_module::{AudioModule, AudioProcessor, Command, CommandHandler};
 use bus::BusReader;
 use crossbeam_channel::Receiver;
 
-use std::{process::exit, thread, time::Duration};
+use std::{thread, time::Duration};
 
 pub fn start_jack_thread<Module: AudioModule>(
     _sample_rate: usize,
@@ -35,13 +35,13 @@ pub fn start_jack_thread<Module: AudioModule>(
             if let Ok(rx_command_msg) = rx_command.try_recv() {
                 let command_msg: Command = rx_command_msg;
                 processor.handle_command(command_msg);
-                processor.process_stereo(
-                    in_l.as_slice(ps),
-                    in_r.as_slice(ps),
-                    out_l.as_mut_slice(ps),
-                    out_r.as_mut_slice(ps),
-                );
             };
+            processor.process_stereo(
+                in_l.as_slice(ps),
+                in_r.as_slice(ps),
+                out_l.as_mut_slice(ps),
+                out_r.as_mut_slice(ps),
+            );
 
             jack::Control::Continue
         };
