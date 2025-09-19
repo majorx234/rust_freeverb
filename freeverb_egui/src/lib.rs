@@ -1,5 +1,5 @@
 use audio_module::{parameters::Parameter, AudioModule, Command, Widget};
-use bus::Bus;
+use bus::{Bus, BusReader};
 use crossbeam_channel::Sender;
 use eframe::{egui, glow::Context};
 
@@ -42,16 +42,17 @@ pub struct FreeverbEguiApp {
     num_params: usize,
     params: Vec<(Box<dyn Parameter>, f32)>,
     jack_thread: Option<std::thread::JoinHandle<()>>,
-    tx_close: Option<Bus<bool>>,
+    tx_close: Bus<bool>,
     tx_command: Option<Sender<Command>>,
 }
 
 impl FreeverbEguiApp {
     pub fn new<Module: AudioModule>(
         jack_thread: Option<std::thread::JoinHandle<()>>,
-        tx_close: Option<Bus<bool>>,
         tx_command: Option<Sender<Command>>,
-    ) -> Self {
+    ) -> (Self, BusReader<bool>) {
+        let mut tx_close = Bus::<bool>::new(1);
+        let rx_close = tx_close.add_rx();
         let num_params = Module::parameter_count();
         let mut params = Vec::new();
         for idx in 0..num_params {
@@ -60,13 +61,19 @@ impl FreeverbEguiApp {
                 Module::parameter(idx).default_user_value(),
             ));
         }
-        FreeverbEguiApp {
+        (FreeverbEguiApp {
             num_params,
             params,
             tx_close,
             tx_command,
             jack_thread,
-        }
+        }, rx_close)
+    }
+    pub fn set_tx_command(&mut self, tx_command: Option<Sender<Command>>,) {
+        self.tx_command = tx_command;
+    }
+    pub fn set_jack_thread(&mut self, jack_thread: Option<std::thread::JoinHandle<()>>,) {
+        self.jack_thread = jack_thread;
     }
 }
 
@@ -104,15 +111,13 @@ impl eframe::App for FreeverbEguiApp {
         });
     }
     fn on_exit(&mut self, _gl: Option<&Context>) {
-        if let Some(ref mut tx_close) = self.tx_close {
-            if let Err(e) = tx_close.try_broadcast(false) {
-                println!("could not send close e: {}", e);
-            };
+        if let Err(e) = self.tx_close.try_broadcast(false) {
+            println!("could not send close e: {}", e);
+        };
 
-            if let Some(jack_thread) = self.jack_thread.take() {
-                jack_thread.join().unwrap();
-            }
-            println!("freeverb close: jack_thread closed");
+        if let Some(jack_thread) = self.jack_thread.take() {
+            jack_thread.join().unwrap();
         }
+        println!("freeverb close: jack_thread closed");
     }
 }
