@@ -78,6 +78,7 @@ impl eframe::App for FreeverbEguiApp {
                 for id in 0..self.num_params {
                     let parameter = &self.params[id];
                     let mut param_value = parameter.1;
+                    ui.add(egui::Label::new(parameter.0.name()));
                     match parameter.0.widget() {
                         Widget::Slider => {
                             ui.add(egui::Slider::new(&mut param_value, 0.0..=100.0).vertical());
@@ -111,7 +112,7 @@ impl eframe::App for FreeverbEguiApp {
             if let Some(jack_thread) = self.jack_thread.take() {
                 jack_thread.join().unwrap();
             }
-            println!("jack_thread closed");
+            println!("freeverb close: jack_thread closed");
         }
     }
 }

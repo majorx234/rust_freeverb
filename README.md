@@ -1,14 +1,15 @@
 # Info
 - reverb coding  tutorial
-
+- using jack as backend
+- create UI dynamically
+  - almost done
 # ToDo
 - add plugin concept
-- jack backend
-- host concept for plugins
+  - host with jack backend
+  - clint as module
 - later as clap plugin
 - hot code reloading
   - https://github.com/irh/rust-hot-reloading
-- create UI dynamically
 
 # References
 - based on freeverb:
