@@ -13,11 +13,9 @@ fn main_run<Module: AudioModule>() {
     let options = eframe::NativeOptions::default();
 
     let samplerate = 48000;
-    let (mut freeverb_egui_app, rx_close) =
-        FreeverbEguiApp::new::<Module>(None, None);
-    let (jack_thread_hdl, tx_command) = start_jack_thread::<Module>(samplerate, rx_close);
-    freeverb_egui_app.set_tx_command(Some(tx_command));
-    freeverb_egui_app.set_jack_thread(Some(jack_thread_hdl));
+    let (jack_thread_hdl, tx_command, tx_close) = start_jack_thread::<Module>(samplerate);
+    let freeverb_egui_app =
+        FreeverbEguiApp::new::<Module>(Some(jack_thread_hdl), Some(tx_command), Some(tx_close));
 
     let _ = eframe::run_native(
         "FreeverbEgui App",

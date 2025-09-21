@@ -1,14 +1,16 @@
 extern crate jack;
 use audio_module::{AudioModule, AudioProcessor, Command, CommandHandler};
-use bus::BusReader;
+use bus::Bus;
 use crossbeam_channel::{bounded, Sender};
 use std::{thread, time::Duration};
 
 pub fn start_jack_thread<Module: AudioModule>(
     _sample_rate: usize,
-    mut rx_close: BusReader<bool>,
-) -> (std::thread::JoinHandle<()>, Sender<Command>) {
+) -> (std::thread::JoinHandle<()>, Sender<Command>, Bus<bool>) {
     let (tx_command, rx_command) = bounded::<Command>(1024);
+    let mut tx_close = Bus::<bool>::new(1);
+    let mut rx_close = tx_close.add_rx();
+
     (std::thread::spawn(move || {
         let (client, _status) =
             jack::Client::new(&Module::name(), jack::ClientOptions::NO_START_SERVER)
@@ -56,5 +58,5 @@ pub fn start_jack_thread<Module: AudioModule>(
             }
         }
         let _ = active_client.deactivate();
-    }), tx_command)
+    }), tx_command, tx_close)
 }
