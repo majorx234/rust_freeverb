@@ -1,11 +1,18 @@
 use crate::widget::Widget;
 
+pub struct Scale {
+    pub lower: f32,
+    pub upper: f32,
+    pub step_size: f32,
+}
+
 pub trait Parameter {
     fn name(&self) -> String;
     fn default_user_value(&self) -> f32;
     fn widget(&self) -> Widget {
         Widget::Slider
     }
+    fn scale(&self) -> Scale;
 }
 
 pub trait ParameterProvider {
@@ -48,6 +55,14 @@ impl Parameter for BoolParameter {
     fn widget(&self) -> Widget {
         Widget::Button
     }
+
+    fn scale(&self) -> Scale {
+        Scale {
+            lower: 0.0f32,
+            upper: 1.0f32,
+            step_size: 1.0f32,
+        }
+    }
 }
 
 pub struct FloatParameter {
@@ -82,6 +97,14 @@ impl Parameter for FloatParameter {
 
     fn widget(&self) -> Widget {
         Widget::Slider
+    }
+
+    fn scale(&self) -> Scale {
+        Scale {
+            lower: 0.0,
+            upper: 1.0,
+            step_size: 0.01,
+        }
     }
 }
 
@@ -120,5 +143,13 @@ impl Parameter for CurveParameter {
     }
     fn widget(&self) -> Widget {
         Widget::Graph
+    }
+
+    fn scale(&self) -> Scale {
+        Scale {
+            lower: 0.0,
+            upper: 1.0,
+            step_size: 0.01,
+        }
     }
 }
