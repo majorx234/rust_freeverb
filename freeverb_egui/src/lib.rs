@@ -84,11 +84,18 @@ impl eframe::App for FreeverbEguiApp {
                 for id in 0..self.num_params {
                     let parameter = &self.params[id];
                     let mut param_value = parameter.1;
+                    let lower = parameter.0.scale().lower;
+                    let upper = parameter.0.scale().upper;
+                    let step_size = parameter.0.scale().step_size;
                     match parameter.0.widget() {
                         Widget::Slider => {
                             ui.vertical(|ui| {
                                 ui.add(egui::Label::new(parameter.0.name()));
-                                ui.add(egui::Slider::new(&mut param_value, 0.0..=100.0).vertical());
+                                ui.add(
+                                    egui::Slider::new(&mut param_value, lower..=upper)
+                                        .step_by(step_size as f64)
+                                        .vertical(),
+                                );
                             });
                         }
                         Widget::Button => {
