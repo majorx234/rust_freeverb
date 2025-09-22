@@ -68,10 +68,10 @@ impl FreeverbEguiApp {
             jack_thread,
         }
     }
-    pub fn set_tx_command(&mut self, tx_command: Option<Sender<Command>>,) {
+    pub fn set_tx_command(&mut self, tx_command: Option<Sender<Command>>) {
         self.tx_command = tx_command;
     }
-    pub fn set_jack_thread(&mut self, jack_thread: Option<std::thread::JoinHandle<()>>,) {
+    pub fn set_jack_thread(&mut self, jack_thread: Option<std::thread::JoinHandle<()>>) {
         self.jack_thread = jack_thread;
     }
 }
@@ -84,15 +84,20 @@ impl eframe::App for FreeverbEguiApp {
                 for id in 0..self.num_params {
                     let parameter = &self.params[id];
                     let mut param_value = parameter.1;
-                    ui.add(egui::Label::new(parameter.0.name()));
                     match parameter.0.widget() {
                         Widget::Slider => {
-                            ui.add(egui::Slider::new(&mut param_value, 0.0..=100.0).vertical());
+                            ui.vertical(|ui| {
+                                ui.add(egui::Label::new(parameter.0.name()));
+                                ui.add(egui::Slider::new(&mut param_value, 0.0..=100.0).vertical());
+                            });
                         }
                         Widget::Button => {
-                            let mut param_value_bool = parameter.1 != 0.0;
-                            ui.add(toggle(&mut param_value_bool));
-                            param_value = if param_value_bool { 1.0 } else { 0.0 };
+                            ui.vertical(|ui| {
+                                ui.add(egui::Label::new(parameter.0.name()));
+                                let mut param_value_bool = parameter.1 != 0.0;
+                                ui.add(toggle(&mut param_value_bool));
+                                param_value = if param_value_bool { 1.0 } else { 0.0 };
+                            });
                         }
                         _ => {}
                     };
@@ -110,7 +115,7 @@ impl eframe::App for FreeverbEguiApp {
         });
     }
     fn on_exit(&mut self, _gl: Option<&Context>) {
-        if let Some(ref mut tx_close) = self.tx_close{
+        if let Some(ref mut tx_close) = self.tx_close {
             if let Err(e) = tx_close.try_broadcast(false) {
                 println!("could not send close e: {}", e);
             };
