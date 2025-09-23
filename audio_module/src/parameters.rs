@@ -69,6 +69,7 @@ pub struct FloatParameter {
     pub name: String,
     pub unit: String,
     pub default_user_value: f32,
+    pub scale: Scale,
 }
 
 impl FloatParameter {
@@ -77,11 +78,21 @@ impl FloatParameter {
             name: name.to_string(),
             unit: String::default(),
             default_user_value: 0.0,
+            scale: Scale {
+                lower: 0.0,
+                upper: 1.0,
+                step_size: 0.01,
+            },
         }
     }
 
     pub fn default_user_value(mut self, default: f32) -> Self {
         self.default_user_value = default;
+        self
+    }
+
+    pub fn scale(mut self, default: Scale) -> Self {
+        self.scale = default;
         self
     }
 }
@@ -146,6 +157,7 @@ impl Parameter for CurveParameter {
     }
 
     fn scale(&self) -> Scale {
+        // todo fix scale default
         Scale {
             lower: 0.0,
             upper: 1.0,
