@@ -113,13 +113,13 @@ impl Freeverb {
                     AllPass::new(adjust_length(ALLPASS_TUNING_R4, sample_rate)),
                 ),
             ],
-            wet_gains: (0.0, 0.0),
-            wet: 1.0,
+            wet_gains: (1.0 * SCALE_WET * 0.75, 1.0 * SCALE_WET * 0.5),
+            wet: 3.0,
             dry: 0.0,
-            input_gain: 0.0,
+            input_gain: 1.0,
             width: 0.5,
-            dampening: 0.5,
-            room_size: 0.5,
+            dampening: 0.5 * SCALE_DAMPENING,
+            room_size: 0.5 * SCALE_ROOM + OFFSET_ROOM,
             frozen: false,
         }
     }
