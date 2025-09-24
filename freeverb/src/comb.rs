@@ -14,8 +14,8 @@ impl Comb {
             delay_line: DelayLine::new(delay_length),
             feedback: 0.5,
             filter_state: 0.0,
-            dampening: 0.2,
-            dampening_inverse: -0.2,
+            dampening: 0.5,
+            dampening_inverse: 0.5,
         }
     }
 
@@ -33,5 +33,21 @@ impl Comb {
         self.delay_line
             .write_and_advance(input + self.filter_state * self.feedback);
         output
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_impulse_response() {
+        let mut comb = super::Comb::new(2);
+        assert_eq!(comb.tick(1.0), 0.0);
+        assert_eq!(comb.tick(0.0), 0.0);
+        assert_eq!(comb.tick(0.0), 1.0);
+        assert_eq!(comb.tick(0.0), 0.0);
+        assert_eq!(comb.tick(0.0), 0.25);
+        assert_eq!(comb.tick(0.0), 0.125);
+        assert_eq!(comb.tick(0.0), 0.125);
+        assert_eq!(comb.tick(0.0), 0.09375);
     }
 }
