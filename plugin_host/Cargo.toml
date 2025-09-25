@@ -1,0 +1,16 @@
+[package]
+name = "plugin_host"
+version = "0.1.0"
+authors = ["MajorX234 <majorx234@googlemail.com>"]
+edition = "2021"
+
+[lib]
+name = "plugin_host"
+path = "src/lib.rs"
+
+[[bin]]
+name = "plugin_host_egui"
+path = "src/main.rs"
+
+[dependencies]
+eframe = { version = "0.31.0" }

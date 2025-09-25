@@ -3,5 +3,7 @@ resolver = "2"
 members = [
    "audio_module",
    "freeverb",
-   "freeverb_egui", "freeverb_module",
+   "freeverb_egui",
+   "freeverb_module",
+   "plugin_host",
 ]
