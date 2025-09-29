@@ -12,5 +12,9 @@ path = "src/lib.rs"
 name = "plugin_host_egui"
 path = "src/main.rs"
 
+[[bin]]
+name = "plugin_host_test_egui"
+path = "src/main_test.rs"
+
 [dependencies]
 eframe = { version = "0.31.0" }
