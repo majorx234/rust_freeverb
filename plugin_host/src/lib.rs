@@ -1,40 +1,19 @@
 use eframe::{
-    egui::{
-        self, vec2, CursorIcon, Id, InnerResponse, Label, LayerId, Order, Rect, Sense, Shape, Ui,
-        Vec2,
-    },
+    egui::{self, Align2, Color32, Id, LayerId, Order, TextStyle},
     glow::Context,
 };
-
-pub fn drop_target<R>(
-    ui: &mut Ui,
-    can_accept_what_is_being_dragged: bool,
-    body: impl FnOnce(&mut Ui) -> R,
-) -> InnerResponse<R> {
-    //let is_being_dragged = ui.memory(|mem| mem.is_anything_being_dragged());
-    let is_being_dragged = ui.memory(|mem| mem.is_anything_being_dragged());
-
-    let margin = Vec2::splat(4.0);
-
-    let outer_rect_bounds = ui.available_rect_before_wrap();
-    let inner_rect = outer_rect_bounds.shrink2(margin);
-    let where_to_put_background = ui.painter().add(Shape::Noop);
-    let mut content_ui = ui.child_ui(inner_rect, *ui.layout(), None);
-    let ret = body(&mut content_ui);
-    let outer_rect = Rect::from_min_max(outer_rect_bounds.min, content_ui.min_rect().max + margin);
-    let (rect, response) = ui.allocate_at_least(outer_rect.size(), Sense::hover());
-
-    InnerResponse::new(ret, response)
-}
+use std::fmt;
 
 pub struct PluginHostEguiApp {
-    loaded_plugin: String,
+    _loaded_plugin: String,
+    dropped_files: Vec<egui::DroppedFile>,
 }
 
 impl PluginHostEguiApp {
     pub fn new() -> Self {
         PluginHostEguiApp {
-            loaded_plugin: String::new(),
+            _loaded_plugin: String::new(),
+            dropped_files: Vec::new(),
         }
     }
 }
@@ -44,12 +23,79 @@ impl eframe::App for PluginHostEguiApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("PluginHost");
         });
-        egui::CentralPanel::default().show(ctx, |mut ui| {
-            let can_accept_what_is_being_dragged = true;
-            let response = drop_target(&mut ui, can_accept_what_is_being_dragged, |ui| {
-                // if ui.memory(|mem| mem.data.borrow_mut {}
+        if !ctx.input(|i| i.raw.hovered_files.is_empty()) {
+            let text = ctx.input(|i| {
+                let mut text = "Dropping files:\n".to_owned();
+                for file in &i.raw.hovered_files {
+                    if let Some(path) = &file.path {
+                        fmt::write(&mut text, format_args!("\n{}", path.display()))
+                            .expect("Error occurred while trying to write in String");
+                        //write!(text, "\n{}", path.display()).ok();
+                    } else if !file.mime.is_empty() {
+                        fmt::write(&mut text, format_args!("\n{}", file.mime))
+                            .expect("Error occurred while trying to write in String");
+                        // write!(text, "\n{}", file.mime).ok();
+                    } else {
+                        text += "\n???";
+                    }
+                }
+                text
             });
+
+            let painter =
+                ctx.layer_painter(LayerId::new(Order::Foreground, Id::new("file_drop_target")));
+
+            let screen_rect = ctx.screen_rect();
+            painter.rect_filled(screen_rect, 0.0, Color32::from_black_alpha(192));
+            painter.text(
+                screen_rect.center(),
+                Align2::CENTER_CENTER,
+                text,
+                TextStyle::Heading.resolve(&ctx.style()),
+                Color32::WHITE,
+            );
+        }
+
+        // Collect dropped files:
+        ctx.input(|i| {
+            if !i.raw.dropped_files.is_empty() {
+                self.dropped_files.clone_from(&i.raw.dropped_files);
+            }
         });
+
+        // Show dropped files (if any):
+        if !self.dropped_files.is_empty() {
+            let mut open = true;
+            egui::Window::new("Dropped files")
+                .open(&mut open)
+                .show(ctx, |ui| {
+                    for file in &self.dropped_files {
+                        let mut info = if let Some(path) = &file.path {
+                            path.display().to_string()
+                        } else if !file.name.is_empty() {
+                            file.name.clone()
+                        } else {
+                            "???".to_owned()
+                        };
+
+                        let mut additional_info = vec![];
+                        if !file.mime.is_empty() {
+                            additional_info.push(format!("type: {}", file.mime));
+                        }
+                        if let Some(bytes) = &file.bytes {
+                            additional_info.push(format!("{} bytes", bytes.len()));
+                        }
+                        if !additional_info.is_empty() {
+                            info += &format!(" ({})", additional_info.join(", "));
+                        }
+
+                        ui.label(info);
+                    }
+                });
+            if !open {
+                self.dropped_files.clear();
+            }
+        }
     }
     fn on_exit(&mut self, _gl: Option<&Context>) {
         println!("PluginHost closed");
