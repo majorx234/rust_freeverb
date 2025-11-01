@@ -44,6 +44,7 @@ pub struct FreeverbEguiApp {
     jack_thread: Option<std::thread::JoinHandle<()>>,
     tx_close: Option<Bus<bool>>,
     tx_command: Option<Sender<Command>>,
+    name: String,
 }
 
 impl FreeverbEguiApp {
@@ -53,6 +54,8 @@ impl FreeverbEguiApp {
         tx_close: Option<Bus<bool>>,
     ) -> Self {
         let num_params = Module::parameter_count();
+        let name = Module::name();
+
         let mut params = Vec::new();
         for idx in 0..num_params {
             params.push((
@@ -66,6 +69,7 @@ impl FreeverbEguiApp {
             tx_close,
             tx_command,
             jack_thread,
+            name,
         }
     }
     pub fn set_tx_command(&mut self, tx_command: Option<Sender<Command>>) {
@@ -79,7 +83,7 @@ impl FreeverbEguiApp {
 impl eframe::App for FreeverbEguiApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("Freeverb");
+            ui.heading(self.name.clone());
             ui.horizontal(|ui| {
                 for id in 0..self.num_params {
                     let parameter = &self.params[id];
