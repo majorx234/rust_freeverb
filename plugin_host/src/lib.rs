@@ -30,11 +30,9 @@ impl eframe::App for PluginHostEguiApp {
                     if let Some(path) = &file.path {
                         fmt::write(&mut text, format_args!("\n{}", path.display()))
                             .expect("Error occurred while trying to write in String");
-                        //write!(text, "\n{}", path.display()).ok();
                     } else if !file.mime.is_empty() {
                         fmt::write(&mut text, format_args!("\n{}", file.mime))
                             .expect("Error occurred while trying to write in String");
-                        // write!(text, "\n{}", file.mime).ok();
                     } else {
                         text += "\n???";
                     }
