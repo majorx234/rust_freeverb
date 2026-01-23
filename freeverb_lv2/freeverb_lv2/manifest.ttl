@@ -1,0 +1,8 @@
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://github.com/majorx234/rust_freeverb> a lv2:Plugin .
+
+<https://github.com/majorx234/rust_freeverb> lv2:binary <libfreeverb_lv2.so> .
+
+<https://github.com/majorx234/rust_freeverb> rdfs:seeAlso <freeverb_lvs.ttl> .

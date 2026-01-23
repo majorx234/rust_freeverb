@@ -53,3 +53,4 @@ impl Plugin for FreeverbLv2 {
         }
     }
 }
+lv2_descriptors!(FreeverbLv2);
