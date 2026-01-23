@@ -5,5 +5,6 @@ members = [
    "freeverb",
    "freeverb_egui",
    "freeverb_module",
+   "freeverb_lv2",
    "plugin_host",
 ]
