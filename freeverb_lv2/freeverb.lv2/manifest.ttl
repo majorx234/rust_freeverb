@@ -5,4 +5,4 @@
 
 <https://github.com/majorx234/rust_freeverb> lv2:binary <libfreeverb_lv2.so> .
 
-<https://github.com/majorx234/rust_freeverb> rdfs:seeAlso <freeverb_lvs.ttl> .
+<https://github.com/majorx234/rust_freeverb> rdfs:seeAlso <freeverb_lv2.ttl> .

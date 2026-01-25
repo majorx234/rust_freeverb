@@ -16,7 +16,7 @@ struct Ports {
     output_r: OutputPort<Audio>,
 }
 
-#[uri("urn:freeverb_lv2")]
+#[uri("https://github.com/majorx234/rust_freeverb")]
 struct FreeverbLv2 {
     freeverb: Freeverb,
 }

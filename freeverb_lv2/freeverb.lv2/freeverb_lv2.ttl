@@ -4,172 +4,175 @@
 @prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix units: <http://lv2plug.in/ns/extensions/units#> .
 
-<http://example.org/freever_lv2_rust>
-	a lv2:Plugin ,
-	    lv2:FreeverbPlugin ;
+<https://github.com/majorx234/rust_freeverb>
+    a lv2:Plugin ,
+            lv2:ReverbPlugin ;
 
-	lv2:project <http://example.org> ;
+    lv2:project <https://github.com/RustAudio/rust-lv2> ;
 
-	doap:name "Freeverb plugin in Rust" ;
-	doap:license <http://opensource.org/licenses/isc> ;
-	lv2:optionalFeature lv2:hardRTCapable ;
-	lv2:port [
+    doap:name "Freeverb plugin in Rust" ;
+    doap:license <http://opensource.org/licenses/isc> ;
+    lv2:requiredFeature lv2:inPlaceBroken ;
+    lv2:optionalFeature lv2:hardRTCapable ;
+    lv2:port [
 
-		a lv2:InputPort ,
-			lv2:ControlPort ;
-		lv2:index 0 ;
-		lv2:symbol "dampening" ;
-		lv2:name "Dampening" ;
+        a lv2:InputPort ,
+            lv2:ControlPort ;
+        lv2:index 0 ;
+        lv2:symbol "dampening" ;
+        lv2:name "Dampening" ;
 
-		lv2:default 0.0 ;
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
 
-		units:unit units:db ;
-		lv2:scalePoint [
-			rdfs:label "1" ;
-			rdf:value 1.0
-		] , [
-			rdfs:label "1/2" ;
-			rdf:value 0.5
-		] , [
-			rdfs:label "0" ;
-			rdf:value 0.0
-		] 
-	] , [
+        units:unit units:db ;
+        lv2:scalePoint [
+            rdfs:label "1" ;
+            rdf:value 1.0
+        ] , [
+            rdfs:label "1/2" ;
+            rdf:value 0.5
+        ] , [
+            rdfs:label "0" ;
+            rdf:value 0.0
+        ]
+    ] , [
 
-		a lv2:InputPort ,
-			lv2:ControlPort ;
-		lv2:index 1 ;
-		lv2:symbol "width" ;
-		lv2:name "Width" ;
+        a lv2:InputPort ,
+            lv2:ControlPort ;
+        lv2:index 1 ;
+        lv2:symbol "width" ;
+        lv2:name "Width" ;
 
-		lv2:default 0.0 ;
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
 
-		units:unit units:db ;
-		lv2:scalePoint [
-			rdfs:label "1" ;
-			rdf:value 1.0
-		] , [
-			rdfs:label "1/2" ;
-			rdf:value 0.5
-		] , [
-			rdfs:label "0" ;
-			rdf:value 0.0
-		] 
-	] , [
+        units:unit units:db ;
+        lv2:scalePoint [
+            rdfs:label "1" ;
+            rdf:value 1.0
+        ] , [
+            rdfs:label "1/2" ;
+            rdf:value 0.5
+        ] , [
+            rdfs:label "0" ;
+            rdf:value 0.0
+        ]
+    ] , [
 
-		a lv2:InputPort ,
-			lv2:ControlPort ;
-		lv2:index 2 ;
-		lv2:symbol "room_size" ;
-		lv2:name "Roomsize" ;
+        a lv2:InputPort ,
+            lv2:ControlPort ;
+        lv2:index 2 ;
+        lv2:symbol "room_size" ;
+        lv2:name "Roomsize" ;
 
-		lv2:default 0.0 ;
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
 
-		units:unit units:db ;
-		lv2:scalePoint [
-			rdfs:label "1" ;
-			rdf:value 1.0
-		] , [
-			rdfs:label "1/2" ;
-			rdf:value 0.5
-		] , [
-			rdfs:label "0" ;
-			rdf:value 0.0
-		] 
-	], [
+        units:unit units:db ;
+        lv2:scalePoint [
+            rdfs:label "1" ;
+            rdf:value 1.0
+        ] , [
+            rdfs:label "1/2" ;
+            rdf:value 0.5
+        ] , [
+            rdfs:label "0" ;
+            rdf:value 0.0
+        ]
+    ], [
 
-		a lv2:InputPort ,
-			lv2:ControlPort ;
-		lv2:index 3 ;
-		lv2:symbol "freeze" ;
-		lv2:name "Freeze" ;
+        a lv2:InputPort ,
+            lv2:ControlPort ;
+        lv2:index 3 ;
+        lv2:symbol "freeze" ;
+        lv2:name "Freeze" ;
 
-		lv2:default 0.0 ;
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
 
-		units:unit units:db ;
-		lv2:scalePoint [
-			rdfs:label "1" ;
-			rdf:value 1.0
-		], [
-			rdfs:label "0" ;
-			rdf:value 0.0
-		] 
-	], [
+        units:unit units:db ;
+        lv2:scalePoint [
+            rdfs:label "1" ;
+            rdf:value 1.0
+        ], [
+            rdfs:label "0" ;
+            rdf:value 0.0
+        ]
+    ], [
 
-		a lv2:InputPort ,
-			lv2:ControlPort ;
-		lv2:index 4 ;
-		lv2:symbol "dry" ;
-		lv2:name "Dry" ;
+        a lv2:InputPort ,
+            lv2:ControlPort ;
+        lv2:index 4 ;
+        lv2:symbol "dry" ;
+        lv2:name "Dry" ;
 
-		lv2:default 0.0 ;
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
 
-		units:unit units:db ;
-		lv2:scalePoint [
-			rdfs:label "1" ;
-			rdf:value 1.0
-		] , [
-			rdfs:label "1/2" ;
-			rdf:value 0.5
-		] , [
-			rdfs:label "0" ;
-			rdf:value 0.0
-		] 
-	], [
+        units:unit units:db ;
+        lv2:scalePoint [
+            rdfs:label "1" ;
+            rdf:value 1.0
+        ] , [
+            rdfs:label "1/2" ;
+            rdf:value 0.5
+        ] , [
+            rdfs:label "0" ;
+            rdf:value 0.0
+        ]
+    ], [
 
-		a lv2:InputPort ,
-			lv2:ControlPort ;
-		lv2:index 5 ;
-		lv2:symbol "wet" ;
-		lv2:name "Wet" ;
+        a lv2:InputPort ,
+            lv2:ControlPort ;
+        lv2:index 5 ;
+        lv2:symbol "wet" ;
+        lv2:name "Wet" ;
 
-		lv2:default 0.0 ;
-		lv2:minimum 0.0 ;
-		lv2:maximum 1.0 ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
 
-		units:unit units:db ;
-		lv2:scalePoint [
-			rdfs:label "1" ;
-			rdf:value 1.0
-		] , [
-			rdfs:label "1/2" ;
-			rdf:value 0.5
-		] , [
-			rdfs:label "0" ;
-			rdf:value 0.0
-		] 
-	], [
-		a lv2:AudioPort ,
-			lv2:InputPort ;
-		lv2:index 6 ;
-		lv2:symbol "in_l" ;
-		lv2:name "In_L"
-	], [
-		a lv2:AudioPort ,
-			lv2:InputPort ;
-		lv2:index 7 ;
-		lv2:symbol "in_r" ;
-		lv2:name "In_R"
-	] , [
-		a lv2:AudioPort ,
-			lv2:OutputPort ;
-		lv2:index 8 ;
-		lv2:symbol "out_l" ;
-		lv2:name "Out_L"
-	], [
-		a lv2:AudioPort ,
-			lv2:OutputPort ;
-		lv2:index 9 ;
-		lv2:symbol "out_r" ;
-		lv2:name "Out_R"
-	] .
+        units:unit units:db ;
+        lv2:scalePoint [
+            rdfs:label "1" ;
+            rdf:value 1.0
+        ] , [
+            rdfs:label "1/2" ;
+            rdf:value 0.5
+        ] , [
+            rdfs:label "0" ;
+            rdf:value 0.0
+        ]
+    ], [
+        a lv2:AudioPort ,
+            lv2:InputPort ;
+        lv2:index 6 ;
+        lv2:symbol "in_l" ;
+        lv2:name "In_L"
+    ], [
+        a lv2:AudioPort ,
+            lv2:InputPort ;
+        lv2:index 7 ;
+        lv2:symbol "in_r" ;
+        lv2:name "In_R"
+    ] , [
+        a lv2:AudioPort ,
+            lv2:OutputPort ;
+        lv2:index 8 ;
+        lv2:symbol "out_l" ;
+        lv2:name "Out_L"
+    ], [
+        a lv2:AudioPort ,
+            lv2:OutputPort ;
+        lv2:index 9 ;
+        lv2:symbol "out_r" ;
+        lv2:name "Out_R"
+    ] .
+
+
