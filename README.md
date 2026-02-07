@@ -11,6 +11,8 @@
   - `cp -r freeverb_lv2/freeverb.lv2 ~/.lv2`
 - copy libfreeverb_lv2.so to this folder too:
   - `cp target/release/libfreeverb_lv2.so ~/.lv2/freeverb.lv2`
+- test with `lv2lint`:
+  - `lv2lint -I ~/.lv2/freeverb.lv2/ https://github.com/majorx234/rust_freeverb`  
 - notes:
   - all params are working, just `freeze`, acts as a boolean
     - value `0` means of, value > `0` means on (e.g: `0.1`)
